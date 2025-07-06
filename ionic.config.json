@@ -1,0 +1,7 @@
+{
+  "name": "metropolitan-museum",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
