@@ -1,0 +1,19 @@
+.artwork-card {
+  position: relative;
+}
+
+.like-container {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+}
+ion-icon[color="danger"] {
+  color: #e74c3c !important;
+}
+
+.like-count {
+  margin-left: 4px;
+  font-size: 1rem;
+}

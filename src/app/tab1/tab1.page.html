@@ -11,7 +11,7 @@
 
 <ion-content>
   <ng-container *ngFor="let art of artworks">
-    <ion-card *ngIf="art.primaryImageSmall && art.primaryImageSmall.trim() !== ''">
+    <ion-card *ngIf="art.primaryImageSmall && art.primaryImageSmall.trim() !== ''" class="artwork-card">
       <img [src]="art.primaryImageSmall" />
       <ion-card-header>
         <ion-card-title>{{ art.title }}</ion-card-title>
@@ -19,6 +19,16 @@
       </ion-card-header>
       <ion-card-content>
         <ion-button size="small" (click)="goToDetails(art.objectID)">Details</ion-button>
+        <div class="like-container">
+          <ion-button fill="clear" size="small" (click)="likeArtwork(art.objectID, $event)">
+            <ion-icon
+              slot="icon-only"
+              [name]="likedSet.has(art.objectID) ? 'heart' : 'heart-outline'"
+              color="danger">
+            </ion-icon>
+            <span class="like-count">{{ likesMap[art.objectID] || 0 }}</span>
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </ng-container>
