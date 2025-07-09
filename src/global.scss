@@ -35,3 +35,28 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+ion-toolbar {
+  --background: #c55b2c;
+  /* Your custom header color */
+  color: white;
+  /* Text/icon color */
+}
+
+ion-title {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+
+ion-tab-bar {
+  --background: #ffffff;
+  --color: #666666;
+  --color-selected: #c55b2c;
+  /* Orange for selected tab */
+}
+
+ion-tab-button {
+  font-size: 22px;
+  /* Make icons larger if needed */
+}

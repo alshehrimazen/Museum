@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ artwork?.title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <img [src]="artwork?.primaryImageSmall" *ngIf="artwork?.primaryImageSmall" />
+  <p><strong>Artist:</strong> {{ artwork?.artistDisplayName }}</p>
+  <p><strong>Period:</strong> {{ artwork?.period }}</p>
+  <p><strong>Medium:</strong> {{ artwork?.medium }}</p>
+
+  <ion-button (click)="addLike()">❤️ Like ({{ likes }})</ion-button>
+
+  <ion-item>
+    <ion-input [(ngModel)]="newComment" placeholder="Write a comment..."></ion-input>
+    <ion-button (click)="addComment()">Post</ion-button>
+  </ion-item>
+
+  <ion-list>
+    <ion-item *ngFor="let comment of comments">
+      <ion-label>
+        <strong>{{ comment.username }}</strong><br />
+        <small>{{ comment.creation_date }}</small><br />
+        {{ comment.comment }}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
