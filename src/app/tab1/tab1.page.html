@@ -1,11 +1,6 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Metropolitan Museum Of Art</ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon slot="icon-only" name="heart-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -18,15 +13,15 @@
         <ion-card-subtitle>{{ art.artistDisplayName }}</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>
-        <ion-button size="small" (click)="goToDetails(art.objectID)">Details</ion-button>
-        <div class="like-container">
-          <ion-button fill="clear" size="small" (click)="likeArtwork(art.objectID, $event)">
-            <ion-icon
-              slot="icon-only"
-              [name]="likedSet.has(art.objectID) ? 'heart' : 'heart-outline'"
-              color="danger">
+        <div class="card-actions">
+          <ion-button class="ion-float-right" fill="clear" (click)="likeArtwork(art.objectID, $event)">
+            <ion-icon slot="icon-only" [name]="likedSet.has(art.objectID) ? 'heart' : 'heart-outline'" color="danger"
+              size="large">
             </ion-icon>
             <span class="like-count">{{ likesMap[art.objectID] || 0 }}</span>
+          </ion-button>
+          <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">
+            Details
           </ion-button>
         </div>
       </ion-card-content>

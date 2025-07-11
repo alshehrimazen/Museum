@@ -17,9 +17,19 @@ export const routes: Routes = [
           import('../tab2/tab2.page').then((m) => m.Tab2Page),
       },
       {
+        path: 'like',
+        loadComponent: () =>
+          import('../like/like.page').then((m) => m.LikePage),
+      },
+      {
         path: 'tab3',
         loadComponent: () =>
           import('../tab3/tab3.page').then((m) => m.Tab3Page),
+      },
+      {
+        path: 'details/:id',
+        loadComponent: () =>
+          import('../details/details.page').then((m) => m.DetailsPage),
       },
       {
         path: '',

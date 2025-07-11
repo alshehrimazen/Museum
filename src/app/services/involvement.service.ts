@@ -25,7 +25,7 @@ export class InvolvementService {
     return this.http.post(
       `${this.baseURL}/${this.appID}/likes`,
       { item_id: objectID },
-      { responseType: 'text' } // <-- Add this line
+      { responseType: 'text' } //
     );
   }
 

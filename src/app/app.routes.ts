@@ -6,7 +6,11 @@ export const routes: Routes = [
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   },
   {
-    path: 'details',
-    loadComponent: () => import('./details/details.page').then( m => m.DetailsPage)
+    path: 'details/:id',
+    loadComponent: () => import('./details/details.page').then(m => m.DetailsPage)
+  },
+  {
+    path: 'like',
+    loadComponent: () => import('./like/like.page').then( m => m.LikePage)
   },
 ];

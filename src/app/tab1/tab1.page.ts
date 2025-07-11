@@ -57,23 +57,28 @@ export class Tab1Page implements OnInit {
   }
 
   goToDetails(objectID: number) {
-    this.router.navigate(['/details', objectID]);
+    this.router.navigate(['/tabs/details', objectID]);
   }
 
   likeArtwork(objectID: number, event: Event) {
     event.stopPropagation();
-    if (this.likedSet.has(objectID)) return; // Prevent multiple likes per session
-    console.log(`Attempting to like artwork with ID: ${objectID}`);
-    this.involvementService.postLike(objectID).subscribe(() => {
-      // Refetch all likes to get the updated count
-      console.log(`Liked artwork with ID: ${objectID}`);
-      this.involvementService.getAllLikes().subscribe(likes => {
-        likes.forEach(like => {
-          this.likesMap[like.item_id] = like.likes;
-          console.log(`Updated likes for ${like.item_id}: ${like.likes}`);
+    if (this.likedSet.has(objectID)) {
+      // Toggle off: just update the UI, do not call the API
+      this.likedSet.delete(objectID);
+      // Optionally, decrement the like count locally for UI effect
+      if (this.likesMap[objectID] && this.likesMap[objectID] > 0) {
+        this.likesMap[objectID]--;
+      }
+    } else {
+      // Toggle on: call the API and update UI
+      this.involvementService.postLike(objectID).subscribe(() => {
+        this.involvementService.getAllLikes().subscribe(likes => {
+          likes.forEach(like => {
+            this.likesMap[like.item_id] = like.likes;
+          });
+          this.likedSet.add(objectID);
         });
-        this.likedSet.add(objectID); // Only block after updating
       });
-    });
+    }
   }
 }
