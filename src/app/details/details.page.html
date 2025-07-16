@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
     <ion-title>{{ artwork?.title }}</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -7,15 +10,25 @@
 <ion-content class="ion-padding">
   <img [src]="artwork?.primaryImageSmall" *ngIf="artwork?.primaryImageSmall" />
   <p><strong>Artist:</strong> {{ artwork?.artistDisplayName }}</p>
-  <p><strong>Period:</strong> {{ artwork?.period }}</p>
+  <p><strong>Date:</strong> {{ artwork?.objectDate || 'Unknown' }}</p>
   <p><strong>Medium:</strong> {{ artwork?.medium }}</p>
 
-  <ion-button (click)="addLike()">❤️ Like ({{ likes }})</ion-button>
+  <ion-button>Likes ({{ likes }})</ion-button>
 
   <ion-item>
-    <ion-input [(ngModel)]="newComment" placeholder="Write a comment..."></ion-input>
-    <ion-button (click)="addComment()">Post</ion-button>
+    <ion-input [(ngModel)]="newName" placeholder="Your name" (ngModelChange)="validateName()" errorText=></ion-input>
   </ion-item>
+  <div *ngIf="nameError" style="color: red; margin-left: 8px; margin-bottom: 8px;">
+    {{ nameError }}
+  </div>
+  <ion-item>
+    <ion-input [(ngModel)]="newComment" placeholder="Write a comment..."
+      (ngModelChange)="validateComment()"></ion-input>
+  </ion-item>
+  <div *ngIf="commentError" style="color: red; margin-left: 8px; margin-bottom: 8px;">
+    {{ commentError }}
+  </div>
+  <ion-button expand="block" fill="solid" (click)="addComment()">Post</ion-button>
 
   <ion-list>
     <ion-item *ngFor="let comment of comments">

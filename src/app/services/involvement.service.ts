@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class InvolvementService {
-  private appID = 'pKSoTbGzFhj5RtoeFQif'; // You can change this to your own app ID
+  private appID = 'pKSoTbGzFhj5RtoeFQif';
   private baseURL = 'https://us-central1-involvement-api.cloudfunctions.net/capstoneApi/apps';
 
   constructor(private http: HttpClient) { }
@@ -16,7 +16,7 @@ export class InvolvementService {
     return this.http.get<any[]>(`${this.baseURL}/${this.appID}/likes`);
   }
 
-  // You can remove objectID from getLikes if not needed, or keep for compatibility
+
   getLikes(objectID: number): Observable<any> {
     return this.http.get(`${this.baseURL}/${this.appID}/likes`);
   }

@@ -1,13 +1,30 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Metropolitan Museum Of Art</ion-title>
+    <ion-title>Metropolitan Museum Of Art - Liked Artworks</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">like</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list>
+    @for (art of likedArtworks; track art) {
+    <ion-card *ngIf="art.primaryImageSmall && art.primaryImageSmall.trim() !== ''" class="artwork-card">
+      <img [src]="art.primaryImageSmall" />
+      <ng-template #noImage>
+        <div style="height:300px;display:flex;align-items:center;justify-content:center;background:#eee;">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+        </div>
+      </ng-template>
+      <ion-card-content>
+        <h2>{{ art.title }}</h2>
+        <p>{{ art.artist || 'Unknown' }}</p>
+        <ion-button fill="clear" fill="solid" color="danger" (click)="removeLike(art)">
+          Remove Like
+        </ion-button>
+        <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">
+          Details
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+    }
+  </ion-list>
 </ion-content>

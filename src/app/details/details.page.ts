@@ -5,6 +5,7 @@ import { InvolvementService } from '../services/involvement.service';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-details',
@@ -18,7 +19,10 @@ export class DetailsPage implements OnInit {
   artwork: any;
   likes: number = 0;
   comments: any[] = [];
+  newName: string = '';
   newComment: string = '';
+  nameError: string = '';
+  commentError: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -53,17 +57,55 @@ export class DetailsPage implements OnInit {
   }
 
   addComment() {
-    if (this.newComment.trim()) {
+    this.validateName();
+    this.validateComment();
+
+    if (this.nameError || this.commentError) {
+      return;
+    }
+    if (this.newName.trim() && this.newComment.trim()) {
+      const name = this.newName;
+      const comment = this.newComment;
+      this.newName = '';
+      this.newComment = '';
       this.involvementService
-        .postComment(this.objectID, 'User', this.newComment)
+        .postComment(this.objectID, name, comment)
         .subscribe(() => {
           this.comments.push({
-            username: 'User',
-            comment: this.newComment,
+            username: name,
+            comment: comment,
             creation_date: new Date().toISOString(),
           });
-          this.newComment = '';
+
+
         });
+    }
+    timer(2000).subscribe(() => {
+      this.involvementService.getComments(this.objectID).subscribe((data: any[]) => {
+        this.comments = data;
+      });
+    });
+  }
+
+  validateName() {
+    const invalidPattern = /[0-9@$%^&*#!\\]/;
+    if (!this.newName.trim()) {
+      this.nameError = 'Name is required.';
+    } else if (invalidPattern.test(this.newName)) {
+      this.nameError = 'Name cannot contain numbers or special characters.';
+    } else {
+      this.nameError = '';
+    }
+  }
+
+  validateComment() {
+    const invalidPattern = /[0-9@$%^&*#!\\]/;
+    if (!this.newComment.trim()) {
+      this.commentError = 'Comment is required.';
+    } else if (invalidPattern.test(this.newComment)) {
+      this.commentError = 'Comment cannot contain numbers or special characters.';
+    } else {
+      this.commentError = '';
     }
   }
 }

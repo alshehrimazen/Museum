@@ -14,10 +14,9 @@
       </ion-card-header>
       <ion-card-content>
         <div class="card-actions">
-          <ion-button class="ion-float-right" fill="clear" (click)="likeArtwork(art.objectID, $event)">
+          <ion-button class="ion-float-right" fill="clear" (click)="likeArtwork(art, $event)">
             <ion-icon slot="icon-only" [name]="likedSet.has(art.objectID) ? 'heart' : 'heart-outline'" color="danger"
-              size="large">
-            </ion-icon>
+              size="large"></ion-icon>
             <span class="like-count">{{ likesMap[art.objectID] || 0 }}</span>
           </ion-button>
           <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">

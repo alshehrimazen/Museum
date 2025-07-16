@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InvolvementService } from '../services/involvement.service';
+import { LikeService } from '../services/like.service';
 
 @Component({
   selector: 'app-tab1',
@@ -26,7 +27,8 @@ export class Tab1Page implements OnInit {
   constructor(
     private artworkService: ArtworkService,
     private router: Router,
-    private involvementService: InvolvementService
+    private involvementService: InvolvementService,
+    private likeService: LikeService
   ) { }
 
   ngOnInit() {
@@ -60,23 +62,24 @@ export class Tab1Page implements OnInit {
     this.router.navigate(['/tabs/details', objectID]);
   }
 
-  likeArtwork(objectID: number, event: Event) {
+  likeArtwork(art: any, event: Event) {
     event.stopPropagation();
+    const objectID = art.objectID;
+
     if (this.likedSet.has(objectID)) {
-      // Toggle off: just update the UI, do not call the API
       this.likedSet.delete(objectID);
-      // Optionally, decrement the like count locally for UI effect
+      this.likeService.removeLike(art);
       if (this.likesMap[objectID] && this.likesMap[objectID] > 0) {
         this.likesMap[objectID]--;
       }
     } else {
-      // Toggle on: call the API and update UI
       this.involvementService.postLike(objectID).subscribe(() => {
         this.involvementService.getAllLikes().subscribe(likes => {
           likes.forEach(like => {
             this.likesMap[like.item_id] = like.likes;
           });
           this.likedSet.add(objectID);
+          this.likeService.addLike(art);
         });
       });
     }
