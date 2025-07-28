@@ -10,6 +10,7 @@ import { NotificationService } from '../services/notification.service';
 
 
 import {
+  AlertController,
   IonContent,
   IonCard,
   IonCardHeader,
@@ -51,8 +52,10 @@ import {
     IonCard,
     IonContent,
   ],
+  providers: [AlertController]
 })
 export class Tab1Page implements OnInit {
+  [x: string]: any;
   artworks: Artwork[] = [];
   allIds: number[] = [];
   batchSize = 7;
@@ -67,6 +70,7 @@ export class Tab1Page implements OnInit {
     private involvementService: InvolvementService,
     private likeService: LikeService,
     private notificationService: NotificationService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -109,6 +113,14 @@ export class Tab1Page implements OnInit {
         body: notification.body ?? 'No body',
         date: new Date()
       });
+      const alert = await this.alertController.create({
+        header: notification.title ?? 'Notification',
+        message: notification.body ?? 'No message provided',
+        buttons: ['OK'],
+        cssClass: 'custom-alert'
+      });
+
+      await alert.present();
 
     });
 
