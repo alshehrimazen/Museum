@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/tab3"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ deptNamee }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    @for (art of artworks; track art.objectID) {
+    @if (art.primaryImageSmall && art.primaryImageSmall.trim() !== '') {
+    @if(deptNamee.includes(art.department)){
+    <ion-card>
+      <img [src]="art.primaryImageSmall" />
+      <ion-card-header>
+        <ion-card-title>{{ art.title }}</ion-card-title>
+        <ion-card-subtitle>{{ art.artistDisplayName || 'Unknown' }}</ion-card-subtitle>
+        <ion-card-subtitle>{{ art.department || 'Unknown' }}</ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+    }
+    }
+    }
+  </ion-list>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreArtworks($event)"
+    [disabled]="currentIndex >= allIds.length">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

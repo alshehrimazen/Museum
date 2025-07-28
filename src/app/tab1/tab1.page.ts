@@ -3,17 +3,54 @@ import { Router } from '@angular/router';
 import { ArtworkService } from '../services/artwork.service';
 import { Artwork } from '../models/artwork.model';
 import { forkJoin } from 'rxjs';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+
 import { InvolvementService } from '../services/involvement.service';
 import { LikeService } from '../services/like.service';
+import { NotificationService } from '../services/notification.service';
+
+
+import {
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonButton,
+  IonIcon,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle, IonButtons
+} from "@ionic/angular/standalone";
+
+import {
+  ActionPerformed,
+  PushNotificationSchema,
+  PushNotifications,
+  Token,
+} from '@capacitor/push-notifications';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: './tab1.page.html',
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [IonButtons,
+    IonTitle,
+    IonToolbar,
+    IonHeader,
+    IonInfiniteScrollContent,
+    IonInfiniteScroll,
+    IonIcon,
+    IonButton,
+    IonCardContent,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonCardHeader,
+    IonCard,
+    IonContent,
+  ],
 })
 export class Tab1Page implements OnInit {
   artworks: Artwork[] = [];
@@ -28,20 +65,55 @@ export class Tab1Page implements OnInit {
     private artworkService: ArtworkService,
     private router: Router,
     private involvementService: InvolvementService,
-    private likeService: LikeService
+    private likeService: LikeService,
+    private notificationService: NotificationService,
   ) { }
 
   ngOnInit() {
-    // Fetch likes first
+    this.initializePushNotifications();
+
     this.involvementService.getAllLikes().subscribe(likes => {
       likes.forEach(like => {
         this.likesMap[like.item_id] = like.likes;
       });
-      // Then fetch artworks
+
       this.artworkService.searchPaintings().subscribe((res) => {
         this.allIds = res.objectIDs;
         this.loadMoreArtworks();
       });
+    });
+  }
+
+  initializePushNotifications() {
+    PushNotifications.requestPermissions().then(result => {
+      if (result.receive === 'granted') {
+        PushNotifications.register();
+      } else {
+        console.error('Push permission not granted');
+      }
+    });
+
+    PushNotifications.addListener('registration', (token: Token) => {
+      console.log('Push registration success, token: ' + token.value);
+    });
+
+    PushNotifications.addListener('registrationError', (error: any) => {
+      alert('Error on registration: ' + JSON.stringify(error));
+    });
+
+    PushNotifications.addListener('pushNotificationReceived', async (notification: PushNotificationSchema) => {
+
+      console.log('Push received: ' + JSON.stringify(notification));
+      this.notificationService.addNotification({
+        title: notification.title ?? 'No title',
+        body: notification.body ?? 'No body',
+        date: new Date()
+      });
+
+    });
+
+    PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
+      alert('Push action performed: ' + JSON.stringify(notification));
     });
   }
 
@@ -60,6 +132,10 @@ export class Tab1Page implements OnInit {
 
   goToDetails(objectID: number) {
     this.router.navigate(['/tabs/details', objectID]);
+  }
+
+  goToNotifications() {
+    this.router.navigate(['/notifications']);
   }
 
   likeArtwork(art: any, event: Event) {

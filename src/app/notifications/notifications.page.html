@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="white" (click)="clearAll()">
+        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ng-container *ngIf="notifications | async as notes">
+    <ion-list *ngIf="notes.length > 0; else noNotifications">
+      <ion-item *ngFor="let note of notes">
+        <ion-label>
+          <h2>{{ note.title }}</h2>
+          <p>{{ note.body }}</p>
+          <small>{{ note.date | date:'short' }}</small>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+
+  <ng-template #noNotifications>
+    <ion-text>No notifications available</ion-text>
+  </ng-template>
+</ion-content>

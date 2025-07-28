@@ -7,17 +7,13 @@
 <ion-content [fullscreen]="true">
   <ion-list>
     @for (art of likedArtworks; track art) {
-    <ion-card *ngIf="art.primaryImageSmall && art.primaryImageSmall.trim() !== ''" class="artwork-card">
+    @if (art.primaryImageSmall && art.primaryImageSmall.trim() !== '') {
+    <ion-card class="artwork-card">
       <img [src]="art.primaryImageSmall" />
-      <ng-template #noImage>
-        <div style="height:300px;display:flex;align-items:center;justify-content:center;background:#eee;">
-          <ion-icon name="image-outline" size="large"></ion-icon>
-        </div>
-      </ng-template>
       <ion-card-content>
         <h2>{{ art.title }}</h2>
         <p>{{ art.artist || 'Unknown' }}</p>
-        <ion-button fill="clear" fill="solid" color="danger" (click)="removeLike(art)">
+        <ion-button fill="clear" color="danger" (click)="removeLike(art)">
           Remove Like
         </ion-button>
         <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">
@@ -25,6 +21,25 @@
         </ion-button>
       </ion-card-content>
     </ion-card>
+    } @else {
+    <ion-card class="artwork-card">
+      <ng-template>
+        <div style="height:300px;display:flex;align-items:center;justify-content:center;background:#eee;">
+          <ion-icon name="image-outline" size="large"></ion-icon>
+        </div>
+      </ng-template>
+      <ion-card-content>
+        <h2>{{ art.title }}</h2>
+        <p>{{ art.artist || 'Unknown' }}</p>
+        <ion-button fill="clear" color="danger" (click)="removeLike(art)">
+          Remove Like
+        </ion-button>
+        <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">
+          Details
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+    }
     }
   </ion-list>
 </ion-content>

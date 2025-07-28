@@ -32,6 +32,13 @@ export const routes: Routes = [
           import('../details/details.page').then((m) => m.DetailsPage),
       },
       {
+        path: 'department-artworks/:id',
+        loadComponent: () =>
+          import('../department-artworks/department-artworks.page').then(
+            (m) => m.DepartmentArtworksPage
+          ),
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',

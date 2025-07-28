@@ -13,4 +13,12 @@ export const routes: Routes = [
     path: 'like',
     loadComponent: () => import('./like/like.page').then( m => m.LikePage)
   },
+  {
+    path: 'department-artworks',
+    loadComponent: () => import('./department-artworks/department-artworks.page').then( m => m.DepartmentArtworksPage)
+  },
+  {
+    path: 'notifications',
+    loadComponent: () => import('./notifications/notifications.page').then( m => m.NotificationsPage)
+  },
 ];

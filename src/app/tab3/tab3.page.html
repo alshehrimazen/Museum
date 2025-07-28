@@ -1,10 +1,15 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Metropolitan Museum Of Art</ion-title>
+    <ion-title>Departments</ion-title>
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
-  <h2>User Profile</h2>
+  <ion-list>
+    @for (dept of departments; track dept.departmentId) {
+    <ion-item button detail (click)="getArtworksByDepartmentName(dept.displayName)">
+      <ion-label>{{ dept.displayName }}</ion-label>
+    </ion-item>
+    }
+  </ion-list>
 </ion-content>

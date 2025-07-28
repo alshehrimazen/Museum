@@ -8,35 +8,49 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <img [src]="artwork?.primaryImageSmall" *ngIf="artwork?.primaryImageSmall" />
+
+  @if (artwork?.primaryImageSmall) {
+  <img [src]="artwork.primaryImageSmall" />
+  }
+
   <p><strong>Artist:</strong> {{ artwork?.artistDisplayName }}</p>
   <p><strong>Date:</strong> {{ artwork?.objectDate || 'Unknown' }}</p>
   <p><strong>Medium:</strong> {{ artwork?.medium }}</p>
 
-  <ion-button>Likes ({{ likes }})</ion-button>
+  <ion-button (click)="addLike()">Likes ({{ likes }})</ion-button>
 
-  <ion-item>
-    <ion-input [(ngModel)]="newName" placeholder="Your name" (ngModelChange)="validateName()" errorText=></ion-input>
-  </ion-item>
-  <div *ngIf="nameError" style="color: red; margin-left: 8px; margin-bottom: 8px;">
-    {{ nameError }}
-  </div>
-  <ion-item>
-    <ion-input [(ngModel)]="newComment" placeholder="Write a comment..."
-      (ngModelChange)="validateComment()"></ion-input>
-  </ion-item>
-  <div *ngIf="commentError" style="color: red; margin-left: 8px; margin-bottom: 8px;">
-    {{ commentError }}
-  </div>
+  <form>
+    <ion-item>
+      <ion-input [formControl]="nameControl" placeholder="Your name"></ion-input>
+    </ion-item>
+    @if (nameError) {
+    <div style="color: red; margin-left: 8px; margin-bottom: 8px;">
+      {{ nameError }}
+    </div>
+    }
+
+    <ion-item>
+      <ion-input [formControl]="commentControl" placeholder="Write a comment..."></ion-input>
+    </ion-item>
+    @if (commentError) {
+    <div style="color: red; margin-left: 8px; margin-bottom: 8px;">
+      {{ commentError }}
+    </div>
+    }
+  </form>
+
   <ion-button expand="block" fill="solid" (click)="addComment()">Post</ion-button>
 
   <ion-list>
-    <ion-item *ngFor="let comment of comments">
+    @for (comment of comments; track comment) {
+    <ion-item>
       <ion-label>
         <strong>{{ comment.username }}</strong><br />
         <small>{{ comment.creation_date }}</small><br />
         {{ comment.comment }}
       </ion-label>
     </ion-item>
+    }
   </ion-list>
+
 </ion-content>

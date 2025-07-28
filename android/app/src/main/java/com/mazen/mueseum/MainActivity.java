@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package com.mazen.mueseum;
 
 import com.getcapacitor.BridgeActivity;
 

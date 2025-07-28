@@ -1,15 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { LikeService } from '../services/like.service';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { LikeService } from '../services/like.service';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonButton,
+  IonList,
+  IonCard,
+  IonCardContent,
+  IonIcon
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-like',
+  standalone: true,
   templateUrl: './like.page.html',
   styleUrls: ['./like.page.scss'],
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonButton, IonList, IonCard, IonCardContent, IonIcon
+  ],
 })
 export class LikePage implements OnInit {
   likedArtworks: any[] = [];
@@ -17,17 +29,20 @@ export class LikePage implements OnInit {
   constructor(private likeService: LikeService, private router: Router) { }
 
   ngOnInit() {
-    this.likedArtworks = this.likeService.getLikes();
-    console.log('Liked artworks:', this.likedArtworks);
+    this.refreshLikes();
   }
 
   ionViewDidEnter() {
-    this.likedArtworks = this.likeService.getLikes(); // Refresh liked artworks when entering the page
+    this.refreshLikes();
+  }
+
+  refreshLikes() {
+    this.likedArtworks = this.likeService.getLikes();
   }
 
   removeLike(art: any) {
     this.likeService.removeLike(art);
-    this.likedArtworks = this.likeService.getLikes();
+    this.refreshLikes();
   }
 
   goToDetails(objectID: number) {

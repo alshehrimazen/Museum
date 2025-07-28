@@ -1,26 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { timer } from 'rxjs';
+
 import { ArtworkService } from '../services/artwork.service';
 import { InvolvementService } from '../services/involvement.service';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { timer } from 'rxjs';
+
+import {
+  IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent,
+  IonButton, IonItem, IonInput, IonList, IonLabel
+} from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.page.html',
   styleUrls: ['./details.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule],
+  imports: [
+    ReactiveFormsModule,
+    IonLabel, IonList, IonInput, IonItem, IonButton, IonContent,
+    IonTitle, IonBackButton, IonButtons, IonToolbar, IonHeader,
+  ],
 })
 export class DetailsPage implements OnInit {
   objectID: number = 0;
   artwork: any;
   likes: number = 0;
   comments: any[] = [];
-  newName: string = '';
-  newComment: string = '';
+
+  nameControl = new FormControl('');
+  commentControl = new FormControl('');
   nameError: string = '';
   commentError: string = '';
 
@@ -33,18 +42,15 @@ export class DetailsPage implements OnInit {
   ngOnInit() {
     this.objectID = Number(this.route.snapshot.paramMap.get('id') || '0');
 
-    // Get artwork details
     this.artworkService.getObjectDetails(this.objectID).subscribe(data => {
       this.artwork = data;
     });
 
-    // Get likes
     this.involvementService.getLikes(this.objectID).subscribe((data: any[]) => {
       const item = data.find((d: any) => d.item_id === this.objectID);
       this.likes = item ? item.likes : 0;
     });
 
-    // Get comments
     this.involvementService.getComments(this.objectID).subscribe((data: any[]) => {
       this.comments = data;
     });
@@ -60,38 +66,41 @@ export class DetailsPage implements OnInit {
     this.validateName();
     this.validateComment();
 
-    if (this.nameError || this.commentError) {
-      return;
-    }
-    if (this.newName.trim() && this.newComment.trim()) {
-      const name = this.newName;
-      const comment = this.newComment;
-      this.newName = '';
-      this.newComment = '';
-      this.involvementService
-        .postComment(this.objectID, name, comment)
-        .subscribe(() => {
-          this.comments.push({
-            username: name,
-            comment: comment,
-            creation_date: new Date().toISOString(),
-          });
+    if (this.nameError || this.commentError) return;
 
+    const name = this.nameControl.value?.trim();
+    const comment = this.commentControl.value?.trim();
 
+    if (name && comment) {
+      this.involvementService.postComment(this.objectID, name, comment).subscribe(() => {
+        // Optionally add it instantly to the list
+        this.comments.push({
+          username: name,
+          comment: comment,
+          creation_date: new Date().toISOString(),
         });
-    }
-    timer(2000).subscribe(() => {
-      this.involvementService.getComments(this.objectID).subscribe((data: any[]) => {
-        this.comments = data;
+
+        // Clear input fields
       });
-    });
+
+      this.nameControl.reset();
+      this.commentControl.reset();
+
+      // Refresh comment list after 2 seconds
+      timer(2000).subscribe(() => {
+        this.involvementService.getComments(this.objectID).subscribe((data: any[]) => {
+          this.comments = data;
+        });
+      });
+    }
   }
 
   validateName() {
+    const name = this.nameControl.value || '';
     const invalidPattern = /[0-9@$%^&*#!\\]/;
-    if (!this.newName.trim()) {
+    if (!name.trim()) {
       this.nameError = 'Name is required.';
-    } else if (invalidPattern.test(this.newName)) {
+    } else if (invalidPattern.test(name)) {
       this.nameError = 'Name cannot contain numbers or special characters.';
     } else {
       this.nameError = '';
@@ -99,10 +108,11 @@ export class DetailsPage implements OnInit {
   }
 
   validateComment() {
+    const comment = this.commentControl.value || '';
     const invalidPattern = /[0-9@$%^&*#!\\]/;
-    if (!this.newComment.trim()) {
+    if (!comment.trim()) {
       this.commentError = 'Comment is required.';
-    } else if (invalidPattern.test(this.newComment)) {
+    } else if (invalidPattern.test(comment)) {
       this.commentError = 'Comment cannot contain numbers or special characters.';
     } else {
       this.commentError = '';

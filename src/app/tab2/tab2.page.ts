@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import {
   IonHeader,
   IonToolbar,
@@ -10,32 +12,28 @@ import {
   IonIcon,
   IonItem,
   IonInput,
-  IonList,
+  IonList, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent
 } from '@ionic/angular/standalone';
-import { FormsModule } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import { Artwork } from '../models/artwork.model';
+
 import { ArtworkService } from '../services/artwork.service';
-import { Router } from '@angular/router';
 import { InvolvementService } from '../services/involvement.service';
 import { LikeService } from '../services/like.service';
-import { IonicModule } from '@ionic/angular';
-
+import { Router } from '@angular/router';
+import { Artwork } from '../models/artwork.model';
 
 @Component({
   selector: 'app-tab2',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule
-  ],
   templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss']
+  styleUrls: ['tab2.page.scss'],
+  imports: [IonCardContent, IonCardTitle, IonCardSubtitle, IonCardHeader, IonCard,
+    ReactiveFormsModule,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonButton, IonIcon, IonItem, IonInput, IonList
+  ]
 })
 export class Tab2Page implements OnInit {
-  searchTerm = '';
+  searchControl = new FormControl('');
   results: any[] = [];
   searched = false;
   artworks: Artwork[] = [];
@@ -46,28 +44,35 @@ export class Tab2Page implements OnInit {
   likesMap: { [key: string]: number } = {};
   likedSet = new Set<number>();
 
-  constructor(private http: HttpClient, private artworkService: ArtworkService,
+  constructor(
+    private http: HttpClient,
+    private artworkService: ArtworkService,
     private router: Router,
     private involvementService: InvolvementService,
-    private likeService: LikeService) { }
-  ngOnInit(): void { // Fetch likes first
+    private likeService: LikeService
+  ) { }
+
+  ngOnInit(): void {
     this.involvementService.getAllLikes().subscribe(likes => {
       likes.forEach(like => {
         this.likesMap[like.item_id] = like.likes;
       });
-      // Then fetch artworks
+
       this.artworkService.searchPaintings().subscribe((res) => {
         this.allIds = res.objectIDs;
         this.loadMoreArtworks();
       });
     });
   }
+
   loadMoreArtworks(event?: any) {
     if (this.loading) return;
     this.loading = true;
+
     const nextIds = this.allIds.slice(this.currentIndex, this.currentIndex + this.batchSize);
-    const requests = nextIds.map((id: number) => this.artworkService.getObjectDetails(id));
-    forkJoin(requests).subscribe((arts) => {
+    const requests = nextIds.map(id => this.artworkService.getObjectDetails(id));
+
+    forkJoin(requests).subscribe(arts => {
       this.artworks = [...this.artworks, ...arts];
       this.currentIndex += this.batchSize;
       this.loading = false;
@@ -103,21 +108,22 @@ export class Tab2Page implements OnInit {
   }
 
   searchArtworks() {
-    if (!this.searchTerm.trim()) {
+    const term = this.searchControl.value?.trim() || '';
+    if (!term) {
       this.results = [];
       this.searched = true;
       return;
     }
-    // Example: Metropolitan Museum of Art Collection API
-    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(this.searchTerm)}`;
+
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(term)}`;
     this.http.get<any>(url).subscribe(res => {
       if (res.objectIDs && res.objectIDs.length > 0) {
-        // Fetch details for the first 10 results
         const requests = res.objectIDs.slice(0, 10).map((id: number) =>
           this.http.get<any>(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
         );
-        Promise.all(requests.map((req: Observable<any>) => req.toPromise())).then(details => {
-          this.results = details;
+
+        forkJoin(requests).subscribe(details => {
+          this.results = details as any[];
           this.searched = true;
         });
       } else {
@@ -126,7 +132,4 @@ export class Tab2Page implements OnInit {
       }
     });
   }
-
-
-
 }

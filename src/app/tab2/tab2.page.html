@@ -6,13 +6,16 @@
 
 <ion-content class="ion-padding">
   <ion-item>
-    <ion-input [(ngModel)]="searchTerm" placeholder="Search for artworks"></ion-input>
+    <ion-input [formControl]="searchControl" placeholder="Search for artworks">
+    </ion-input>
     <ion-button (click)="searchArtworks()">Search</ion-button>
   </ion-item>
 
-  <ion-list *ngIf="results.length > 0">
+  @if (results.length > 0) {
+  <ion-list>
     @for (art of results; track art) {
-    <ion-card *ngIf="art.primaryImageSmall && art.primaryImageSmall.trim() !== ''" class="artwork-card">
+    @if (art.primaryImageSmall && art.primaryImageSmall.trim() !== '') {
+    <ion-card class="artwork-card">
       <img [src]="art.primaryImageSmall" />
       <ion-card-header>
         <ion-card-title>{{ art.title }}</ion-card-title>
@@ -22,7 +25,8 @@
         <div class="card-actions">
           <ion-button class="ion-float-right" fill="clear" (click)="likeArtwork(art, $event)">
             <ion-icon slot="icon-only" [name]="likedSet.has(art.objectID) ? 'heart' : 'heart-outline'" color="danger"
-              size="large"></ion-icon>
+              size="large">
+            </ion-icon>
             <span class="like-count">{{ likesMap[art.objectID] || 0 }}</span>
           </ion-button>
           <ion-button expand="block" fill="solid" color="tertiary" (click)="goToDetails(art.objectID)">
@@ -32,6 +36,11 @@
       </ion-card-content>
     </ion-card>
     }
+    }
   </ion-list>
-  <div *ngIf="results.length === 0 && searched">No results found.</div>
+  }
+
+  @if (results.length === 0 && searched) {
+  <div>No results found.</div>
+  }
 </ion-content>
